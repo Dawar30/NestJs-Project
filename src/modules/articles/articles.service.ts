@@ -5,11 +5,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TagsService } from '../tags/tags.service.js';
 import { CreateArticleDto } from './dto/create-article.dto.js';
 import { UpdateArticleDto } from './dto/update-article.dto.js';
 import { QueryArticleDto } from './dto/query-article.dto.js';
 import { Article, ArticleStatus, RoleType } from '../../database/entities/index.js';
+import { ArticlePublishedEvent } from '../../events/index.js';
 import { randomBytes } from 'node:crypto';
 
 @Injectable()
@@ -18,6 +20,7 @@ export class ArticlesService {
     @InjectRepository(Article)
     private readonly articleRepository: Repository<Article>,
     private readonly tagsService: TagsService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   private slugify(text: string): string {
@@ -75,7 +78,16 @@ export class ArticlesService {
       tags,
     });
 
-    return this.articleRepository.save(article);
+    const saved = await this.articleRepository.save(article);
+
+    if (saved.status === ArticleStatus.PUBLISHED) {
+      this.eventEmitter.emit(
+        'article.published',
+        new ArticlePublishedEvent(saved.id, saved.authorId, saved.title, saved.slug),
+      );
+    }
+
+    return saved;
   }
 
   async findAll(query: QueryArticleDto) {
@@ -230,6 +242,7 @@ export class ArticlesService {
     if (dto.coverImage !== undefined) article.coverImage = dto.coverImage;
     if (dto.categoryId !== undefined) article.categoryId = dto.categoryId;
 
+    const previousStatus = article.status;
     if (dto.status) {
       article.status = dto.status;
       if (dto.status === ArticleStatus.PUBLISHED && !article.publishedAt) {
@@ -241,7 +254,19 @@ export class ArticlesService {
       article.tags = await this.tagsService.findOrCreateMany(dto.tags);
     }
 
-    return this.articleRepository.save(article);
+    const saved = await this.articleRepository.save(article);
+
+    if (
+      saved.status === ArticleStatus.PUBLISHED &&
+      previousStatus !== ArticleStatus.PUBLISHED
+    ) {
+      this.eventEmitter.emit(
+        'article.published',
+        new ArticlePublishedEvent(saved.id, saved.authorId, saved.title, saved.slug),
+      );
+    }
+
+    return saved;
   }
 
   async publish(

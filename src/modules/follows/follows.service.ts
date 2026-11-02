@@ -6,7 +6,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Follow, User, Article, ArticleStatus } from '../../database/entities/index.js';
+import { UserFollowedEvent } from '../../events/index.js';
 
 @Injectable()
 export class FollowsService {
@@ -17,6 +19,7 @@ export class FollowsService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Article)
     private readonly articleRepository: Repository<Article>,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async follow(
@@ -46,6 +49,12 @@ export class FollowsService {
       followingId,
     });
     await this.followRepository.save(followRecord);
+
+    // Emit domain event
+    this.eventEmitter.emit(
+      'user.followed',
+      new UserFollowedEvent(followerId, followingId),
+    );
 
     return { message: `You are now following @${targetUser.username}` };
   }

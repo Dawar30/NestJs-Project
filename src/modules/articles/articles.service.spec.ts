@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ArticlesService } from './articles.service.js';
 import { TagsService } from '../tags/tags.service.js';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
@@ -17,6 +18,9 @@ describe('ArticlesService', () => {
   };
   let tagsService: {
     findOrCreateMany: any;
+  };
+  let eventEmitter: {
+    emit: any;
   };
 
   const mockArticle: Partial<Article> = {
@@ -61,6 +65,10 @@ describe('ArticlesService', () => {
         .mockResolvedValue([{ id: 'tag-1', name: 'NestJS', slug: 'nestjs' }]),
     };
 
+    eventEmitter = {
+      emit: vi.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ArticlesService,
@@ -69,6 +77,7 @@ describe('ArticlesService', () => {
           useValue: articleRepository,
         },
         { provide: TagsService, useValue: tagsService },
+        { provide: EventEmitter2, useValue: eventEmitter },
       ],
     }).compile();
 
@@ -97,7 +106,6 @@ describe('ArticlesService', () => {
     it('should return article if found via query builder', async () => {
       const qbMock = {
         leftJoinAndSelect: vi.fn().mockReturnThis(),
-        loadRelationCountAndMap: vi.fn().mockReturnThis(),
         where: vi.fn().mockReturnThis(),
         andWhere: vi.fn().mockReturnThis(),
         getOne: vi.fn().mockResolvedValue(mockArticle),
@@ -112,7 +120,6 @@ describe('ArticlesService', () => {
     it('should throw NotFoundException if article does not exist', async () => {
       const qbMock = {
         leftJoinAndSelect: vi.fn().mockReturnThis(),
-        loadRelationCountAndMap: vi.fn().mockReturnThis(),
         where: vi.fn().mockReturnThis(),
         andWhere: vi.fn().mockReturnThis(),
         getOne: vi.fn().mockResolvedValue(null),

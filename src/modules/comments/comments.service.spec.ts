@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CommentsService } from './comments.service.js';
 import { Comment, Article, RoleType } from '../../database/entities/index.js';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
@@ -17,6 +18,9 @@ describe('CommentsService', () => {
   };
   let articleRepository: {
     findOne: any;
+  };
+  let eventEmitter: {
+    emit: any;
   };
 
   const mockComment = {
@@ -50,6 +54,10 @@ describe('CommentsService', () => {
       findOne: vi.fn().mockResolvedValue({ id: 'article-1' }),
     };
 
+    eventEmitter = {
+      emit: vi.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CommentsService,
@@ -61,6 +69,7 @@ describe('CommentsService', () => {
           provide: getRepositoryToken(Article),
           useValue: articleRepository,
         },
+        { provide: EventEmitter2, useValue: eventEmitter },
       ],
     }).compile();
 
@@ -77,6 +86,7 @@ describe('CommentsService', () => {
         where: { id: 'article-1' },
       });
       expect(commentRepository.save).toHaveBeenCalled();
+      expect(eventEmitter.emit).toHaveBeenCalledWith('comment.created', expect.anything());
       expect(result.content).toBe('Great article!');
     });
 

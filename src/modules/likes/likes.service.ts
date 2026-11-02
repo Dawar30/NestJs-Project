@@ -1,7 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Like, Article } from '../../database/entities/index.js';
+import { ArticleLikedEvent } from '../../events/index.js';
 
 @Injectable()
 export class LikesService {
@@ -10,6 +12,7 @@ export class LikesService {
     private readonly likeRepository: Repository<Like>,
     @InjectRepository(Article)
     private readonly articleRepository: Repository<Article>,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async toggleLike(
@@ -37,6 +40,12 @@ export class LikesService {
 
     const like = this.likeRepository.create({ articleId, userId });
     await this.likeRepository.save(like);
+
+    // Emit domain event
+    this.eventEmitter.emit(
+      'article.liked',
+      new ArticleLikedEvent(articleId, userId),
+    );
 
     const totalLikes = await this.likeRepository.count({
       where: { articleId },

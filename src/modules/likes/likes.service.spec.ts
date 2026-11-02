@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { LikesService } from './likes.service.js';
 import { Like, Article } from '../../database/entities/index.js';
 import { NotFoundException } from '@nestjs/common';
@@ -18,6 +19,9 @@ describe('LikesService', () => {
   let articleRepository: {
     findOne: any;
   };
+  let eventEmitter: {
+    emit: any;
+  };
 
   beforeEach(async () => {
     likeRepository = {
@@ -33,6 +37,10 @@ describe('LikesService', () => {
       findOne: vi.fn().mockResolvedValue({ id: 'article-1' }),
     };
 
+    eventEmitter = {
+      emit: vi.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LikesService,
@@ -44,6 +52,7 @@ describe('LikesService', () => {
           provide: getRepositoryToken(Article),
           useValue: articleRepository,
         },
+        { provide: EventEmitter2, useValue: eventEmitter },
       ],
     }).compile();
 
@@ -51,7 +60,7 @@ describe('LikesService', () => {
   });
 
   describe('toggleLike', () => {
-    it('should create like if not currently liked', async () => {
+    it('should create like and emit event if not currently liked', async () => {
       likeRepository.findOne.mockResolvedValue(null);
       likeRepository.count.mockResolvedValue(1);
 
@@ -59,6 +68,7 @@ describe('LikesService', () => {
       expect(result.liked).toBe(true);
       expect(result.totalLikes).toBe(1);
       expect(likeRepository.save).toHaveBeenCalled();
+      expect(eventEmitter.emit).toHaveBeenCalledWith('article.liked', expect.anything());
     });
 
     it('should remove like if already liked', async () => {

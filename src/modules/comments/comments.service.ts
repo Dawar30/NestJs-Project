@@ -6,9 +6,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Comment, Article, RoleType } from '../../database/entities/index.js';
 import { CreateCommentDto } from './dto/create-comment.dto.js';
 import { UpdateCommentDto } from './dto/update-comment.dto.js';
+import { CommentCreatedEvent } from '../../events/index.js';
 
 @Injectable()
 export class CommentsService {
@@ -17,6 +19,7 @@ export class CommentsService {
     private readonly commentRepository: Repository<Comment>,
     @InjectRepository(Article)
     private readonly articleRepository: Repository<Article>,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async create(
@@ -54,6 +57,17 @@ export class CommentsService {
 
     const saved = await this.commentRepository.save(comment);
 
+    // Emit domain event
+    this.eventEmitter.emit(
+      'comment.created',
+      new CommentCreatedEvent(
+        saved.id,
+        saved.articleId,
+        saved.authorId,
+        saved.parentId,
+      ),
+    );
+
     return this.commentRepository.findOneOrFail({
       where: { id: saved.id },
       relations: {
@@ -63,7 +77,6 @@ export class CommentsService {
   }
 
   async findByArticle(articleId: string): Promise<Comment[]> {
-    // Return root comments with nested replies and safe author information
     const comments = await this.commentRepository.find({
       where: {
         articleId,
@@ -141,7 +154,6 @@ export class CommentsService {
       );
     }
 
-    // Soft delete
     await this.commentRepository.softDelete(id);
     return { message: 'Comment deleted successfully' };
   }

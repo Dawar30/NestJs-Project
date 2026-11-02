@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { FollowsService } from './follows.service.js';
 import { Follow, User, Article } from '../../database/entities/index.js';
 import { BadRequestException, ConflictException } from '@nestjs/common';
@@ -21,6 +22,9 @@ describe('FollowsService', () => {
   let articleRepository: {
     findAndCount: any;
   };
+  let eventEmitter: {
+    emit: any;
+  };
 
   beforeEach(async () => {
     followRepository = {
@@ -40,6 +44,10 @@ describe('FollowsService', () => {
       findAndCount: vi.fn().mockResolvedValue([[], 0]),
     };
 
+    eventEmitter = {
+      emit: vi.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FollowsService,
@@ -55,6 +63,7 @@ describe('FollowsService', () => {
           provide: getRepositoryToken(Article),
           useValue: articleRepository,
         },
+        { provide: EventEmitter2, useValue: eventEmitter },
       ],
     }).compile();
 
@@ -76,11 +85,12 @@ describe('FollowsService', () => {
       );
     });
 
-    it('should follow target user successfully', async () => {
+    it('should follow target user successfully and emit event', async () => {
       followRepository.findOne.mockResolvedValue(null);
 
       const result = await service.follow('user-1', 'user-2');
       expect(followRepository.save).toHaveBeenCalled();
+      expect(eventEmitter.emit).toHaveBeenCalledWith('user.followed', expect.anything());
       expect(result.message).toContain('You are now following');
     });
   });
