@@ -50,7 +50,7 @@ export const ALL_ENTITIES = [
           type: 'postgres',
           url: databaseUrl,
           entities: ALL_ENTITIES,
-          synchronize: !isProduction, // Auto schema sync in development / test
+          synchronize: false, // Auto schema sync in development / test
           logging: !isProduction ? ['error', 'warn'] : ['error'],
         };
       },
