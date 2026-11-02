@@ -1,19 +1,37 @@
 import { Module } from '@nestjs/common';
-import { createObserveModule } from '@nestjs/observe';
+import { ConfigModule } from '@nestjs/config';
+import { validateEnvironment } from './config/env.validation.js';
+import { DatabaseModule } from './database/database.module.js';
+import { CommonModule } from './common/common.module.js';
+import { UsersModule } from './modules/users/users.module.js';
+import { AuthModule } from './modules/auth/auth.module.js';
+import { CategoriesModule } from './modules/categories/categories.module.js';
+import { TagsModule } from './modules/tags/tags.module.js';
+import { ArticlesModule } from './modules/articles/articles.module.js';
+import { CommentsModule } from './modules/comments/comments.module.js';
+import { LikesModule } from './modules/likes/likes.module.js';
+import { BookmarksModule } from './modules/bookmarks/bookmarks.module.js';
+import { FollowsModule } from './modules/follows/follows.module.js';
 import { AdminController, AppController, CatsController } from './app.controller.js';
 import { AppService } from './app.service.js';
 
-export const { ObserveModule, ObserveInstrument } = createObserveModule();
-
 @Module({
   imports: [
-    // Distributed tracing, auto-correlated logs, request/job metrics, error
-    // telemetry, alarms, and more — out of the box. Sign up at https://observe.nestjs.com
-    ObserveModule.forRoot({
-      appKey: 'YOUR_APP_KEY',
-      appSecret: 'YOUR_APP_SECRET',
-      serviceId: 'nest-js-project',
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validate: validateEnvironment,
     }),
+    DatabaseModule,
+    CommonModule,
+    UsersModule,
+    AuthModule,
+    CategoriesModule,
+    TagsModule,
+    ArticlesModule,
+    CommentsModule,
+    LikesModule,
+    BookmarksModule,
+    FollowsModule,
   ],
   controllers: [AppController, CatsController, AdminController],
   providers: [AppService],
