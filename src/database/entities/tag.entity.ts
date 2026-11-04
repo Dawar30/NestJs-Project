@@ -5,6 +5,7 @@ import {
   Index,
   ManyToMany,
   PrimaryGeneratedColumn,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import { Article } from './article.entity.js';
@@ -29,5 +30,5 @@ export class Tag {
   updatedAt: Date;
 
   @ManyToMany(() => Article, (article) => article.tags)
-  articles: Article[];
+  articles: Relation<Article[]>;
 }

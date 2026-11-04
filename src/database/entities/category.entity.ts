@@ -5,6 +5,7 @@ import {
   Index,
   OneToMany,
   PrimaryGeneratedColumn,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import { Article } from './article.entity.js';
@@ -32,5 +33,5 @@ export class Category {
   updatedAt: Date;
 
   @OneToMany(() => Article, (article) => article.category)
-  articles: Article[];
+  articles: Relation<Article[]>;
 }

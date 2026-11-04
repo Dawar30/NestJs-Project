@@ -4,6 +4,7 @@ import {
   Entity,
   ManyToMany,
   PrimaryGeneratedColumn,
+  type Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
@@ -31,5 +32,5 @@ export class Permission {
   updatedAt: Date;
 
   @ManyToMany(() => Role, (role) => role.permissions)
-  roles: Role[];
+  roles: Relation<Role[]>;
 }

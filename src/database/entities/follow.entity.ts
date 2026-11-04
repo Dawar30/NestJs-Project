@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  type Relation,
   Unique,
 } from 'typeorm';
 import { User } from './user.entity.js';
@@ -29,9 +30,9 @@ export class Follow {
 
   @ManyToOne(() => User, (user) => user.following, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'follower_id' })
-  follower: User;
+  follower: Relation<User>;
 
   @ManyToOne(() => User, (user) => user.followers, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'following_id' })
-  following: User;
+  following: Relation<User>;
 }

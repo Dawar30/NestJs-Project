@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  type Relation,
 } from 'typeorm';
 import { NotificationType } from './enums.js';
 import { User } from './user.entity.js';
@@ -49,12 +50,12 @@ export class Notification {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'recipient_id' })
-  recipient: User;
+  recipient: Relation<User>;
 
   @ManyToOne(() => User, (user) => user.notificationsTriggered, {
     onDelete: 'SET NULL',
     nullable: true,
   })
   @JoinColumn({ name: 'actor_id' })
-  actor?: User | null;
+  actor?: Relation<User> | null;
 }

@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  type Relation,
   Unique,
 } from 'typeorm';
 import { User } from './user.entity.js';
@@ -30,11 +31,11 @@ export class Bookmark {
 
   @ManyToOne(() => User, (user) => user.bookmarks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: Relation<User>;
 
   @ManyToOne(() => Article, (article) => article.bookmarks, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'article_id' })
-  article: Article;
+  article: Relation<Article>;
 }

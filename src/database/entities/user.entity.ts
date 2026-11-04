@@ -9,6 +9,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import { Profile } from './profile.entity.js';
@@ -57,7 +58,7 @@ export class User {
     cascade: true,
     eager: true,
   })
-  profile?: Profile;
+  profile?: Relation<Profile>;
 
   @ManyToMany(() => Role, (role) => role.users, { eager: true, cascade: true })
   @JoinTable({
@@ -65,35 +66,35 @@ export class User {
     joinColumn: { name: 'user_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
   })
-  roles: Role[];
+  roles: Relation<Role[]>;
 
   @OneToMany(() => Article, (article) => article.author)
-  articles: Article[];
+  articles: Relation<Article[]>;
 
   @OneToMany(() => Comment, (comment) => comment.author)
-  comments: Comment[];
+  comments: Relation<Comment[]>;
 
   @OneToMany(() => Like, (like) => like.user)
-  likes: Like[];
+  likes: Relation<Like[]>;
 
   @OneToMany(() => Bookmark, (bookmark) => bookmark.user)
-  bookmarks: Bookmark[];
+  bookmarks: Relation<Bookmark[]>;
 
   @OneToMany(() => RefreshToken, (token) => token.user)
-  refreshTokens: RefreshToken[];
+  refreshTokens: Relation<RefreshToken[]>;
 
   @OneToMany(() => Follow, (follow) => follow.follower)
-  following: Follow[];
+  following: Relation<Follow[]>;
 
   @OneToMany(() => Follow, (follow) => follow.following)
-  followers: Follow[];
+  followers: Relation<Follow[]>;
 
   @OneToMany(() => Notification, (notification) => notification.recipient)
-  notificationsReceived: Notification[];
+  notificationsReceived: Relation<Notification[]>;
 
   @OneToMany(() => Notification, (notification) => notification.actor)
-  notificationsTriggered: Notification[];
+  notificationsTriggered: Relation<Notification[]>;
 
   @OneToMany(() => Report, (report) => report.reporter)
-  reportsFiled: Report[];
+  reportsFiled: Relation<Report[]>;
 }

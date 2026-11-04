@@ -8,6 +8,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity.js';
@@ -46,19 +47,19 @@ export class Comment {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'article_id' })
-  article: Article;
+  article: Relation<Article>;
 
   @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'author_id' })
-  author: User;
+  author: Relation<User>;
 
   @ManyToOne(() => Comment, (comment) => comment.replies, {
     onDelete: 'CASCADE',
     nullable: true,
   })
   @JoinColumn({ name: 'parent_id' })
-  parent?: Comment | null;
+  parent?: Relation<Comment> | null;
 
   @OneToMany(() => Comment, (comment) => comment.parent)
-  replies: Comment[];
+  replies: Relation<Comment[]>;
 }

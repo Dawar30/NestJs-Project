@@ -6,6 +6,7 @@ import {
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import { RoleType } from './enums.js';
@@ -43,8 +44,8 @@ export class Role {
     joinColumn: { name: 'role_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'permission_id', referencedColumnName: 'id' },
   })
-  permissions: Permission[];
+  permissions: Relation<Permission[]>;
 
   @ManyToMany(() => User, (user) => user.roles)
-  users: User[];
+  users: Relation<User[]>;
 }

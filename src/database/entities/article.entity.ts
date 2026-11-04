@@ -10,6 +10,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import { ArticleStatus } from './enums.js';
@@ -75,14 +76,14 @@ export class Article {
 
   @ManyToOne(() => User, (user) => user.articles, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'author_id' })
-  author: User;
+  author: Relation<User>;
 
   @ManyToOne(() => Category, (category) => category.articles, {
     onDelete: 'SET NULL',
     nullable: true,
   })
   @JoinColumn({ name: 'category_id' })
-  category?: Category | null;
+  category?: Relation<Category> | null;
 
   @ManyToMany(() => Tag, (tag) => tag.articles, { cascade: true, eager: true })
   @JoinTable({
@@ -90,17 +91,17 @@ export class Article {
     joinColumn: { name: 'article_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'tag_id', referencedColumnName: 'id' },
   })
-  tags: Tag[];
+  tags: Relation<Tag[]>;
 
   @OneToMany(() => Comment, (comment) => comment.article)
-  comments: Comment[];
+  comments: Relation<Comment[]>;
 
   @OneToMany(() => Like, (like) => like.article)
-  likes: Like[];
+  likes: Relation<Like[]>;
 
   @OneToMany(() => Bookmark, (bookmark) => bookmark.article)
-  bookmarks: Bookmark[];
+  bookmarks: Relation<Bookmark[]>;
 
   @OneToMany(() => Report, (report) => report.article)
-  reports: Report[];
+  reports: Relation<Report[]>;
 }

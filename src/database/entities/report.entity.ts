@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import { ReportStatus, ReportTargetType } from './enums.js';
@@ -71,12 +72,12 @@ export class Report {
 
   @ManyToOne(() => User, (user) => user.reportsFiled, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'reporter_id' })
-  reporter: User;
+  reporter: Relation<User>;
 
   @ManyToOne(() => Article, (article) => article.reports, {
     onDelete: 'CASCADE',
     nullable: true,
   })
   @JoinColumn({ name: 'article_id' })
-  article?: Article | null;
+  article?: Relation<Article> | null;
 }
