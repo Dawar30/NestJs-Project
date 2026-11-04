@@ -28,29 +28,29 @@ export class User {
   id: string;
 
   @Index({ unique: true })
-  @Column({ unique: true })
+  @Column({ type: 'varchar', unique: true })
   email: string;
 
   @Index({ unique: true })
-  @Column({ unique: true })
+  @Column({ type: 'varchar', unique: true })
   username: string;
 
-  @Column({ name: 'password_hash' })
+  @Column({ name: 'password_hash', type: 'varchar' })
   passwordHash: string;
 
-  @Column({ name: 'is_active', default: true })
+  @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
 
-  @Column({ name: 'is_email_verified', default: false })
+  @Column({ name: 'is_email_verified', type: 'boolean', default: false })
   isEmailVerified: boolean;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deletedAt?: Date | null;
 
   @OneToOne(() => Profile, (profile) => profile.user, {

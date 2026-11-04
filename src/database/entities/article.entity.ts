@@ -26,11 +26,11 @@ export class Article {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   title: string;
 
   @Index({ unique: true })
-  @Column({ unique: true })
+  @Column({ type: 'varchar', unique: true })
   slug: string;
 
   @Column({ type: 'text', nullable: true })
@@ -39,7 +39,7 @@ export class Article {
   @Column({ type: 'text' })
   content: string;
 
-  @Column({ name: 'cover_image', nullable: true })
+  @Column({ name: 'cover_image', type: 'varchar', nullable: true })
   coverImage?: string;
 
   @Index()
@@ -50,27 +50,27 @@ export class Article {
   })
   status: ArticleStatus;
 
-  @Column({ name: 'reading_time_minutes', default: 1 })
+  @Column({ name: 'reading_time_minutes', type: 'int', default: 1 })
   readingTimeMinutes: number;
 
   @Column({ name: 'published_at', type: 'timestamp', nullable: true })
   publishedAt?: Date | null;
 
   @Index()
-  @Column({ name: 'author_id' })
+  @Column({ name: 'author_id', type: 'varchar' })
   authorId: string;
 
   @Index()
-  @Column({ name: 'category_id', nullable: true })
+  @Column({ name: 'category_id', type: 'varchar', nullable: true })
   categoryId?: string | null;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deletedAt?: Date | null;
 
   @ManyToOne(() => User, (user) => user.articles, { onDelete: 'CASCADE' })

@@ -15,23 +15,23 @@ export class RefreshToken {
   id: string;
 
   @Index()
-  @Column({ name: 'user_id' })
+  @Column({ name: 'user_id', type: 'varchar' })
   userId: string;
 
   @Index({ unique: true })
-  @Column({ name: 'token_hash', unique: true })
+  @Column({ name: 'token_hash', type: 'varchar', unique: true })
   tokenHash: string;
 
   @Column({ name: 'expires_at', type: 'timestamp' })
   expiresAt: Date;
 
-  @Column({ name: 'is_revoked', default: false })
+  @Column({ name: 'is_revoked', type: 'boolean', default: false })
   isRevoked: boolean;
 
-  @Column({ name: 'replaced_by_token', nullable: true })
+  @Column({ name: 'replaced_by_token', type: 'varchar', nullable: true })
   replacedByToken?: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.refreshTokens, { onDelete: 'CASCADE' })

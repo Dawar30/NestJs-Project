@@ -17,14 +17,14 @@ export class Follow {
   id: string;
 
   @Index()
-  @Column({ name: 'follower_id' })
+  @Column({ name: 'follower_id', type: 'varchar' })
   followerId: string;
 
   @Index()
-  @Column({ name: 'following_id' })
+  @Column({ name: 'following_id', type: 'varchar' })
   followingId: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.following, { onDelete: 'CASCADE' })

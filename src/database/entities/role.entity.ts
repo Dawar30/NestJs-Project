@@ -25,13 +25,13 @@ export class Role {
   })
   name: RoleType;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   description?: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
 
   @ManyToMany(() => Permission, (permission) => permission.roles, {

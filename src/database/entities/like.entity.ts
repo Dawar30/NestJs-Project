@@ -18,14 +18,14 @@ export class Like {
   id: string;
 
   @Index()
-  @Column({ name: 'user_id' })
+  @Column({ name: 'user_id', type: 'varchar' })
   userId: string;
 
   @Index()
-  @Column({ name: 'article_id' })
+  @Column({ name: 'article_id', type: 'varchar' })
   articleId: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.likes, { onDelete: 'CASCADE' })

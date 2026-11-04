@@ -27,7 +27,7 @@ export class Report {
   id: string;
 
   @Index()
-  @Column({ name: 'reporter_id' })
+  @Column({ name: 'reporter_id', type: 'varchar' })
   reporterId: string;
 
   @Index()
@@ -39,10 +39,10 @@ export class Report {
   targetType: ReportTargetType;
 
   @Index()
-  @Column({ name: 'target_id' })
+  @Column({ name: 'target_id', type: 'varchar' })
   targetId: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   reason: string;
 
   @Column({ type: 'text', nullable: true })
@@ -60,13 +60,13 @@ export class Report {
   adminNotes?: string;
 
   @Index()
-  @Column({ name: 'article_id', nullable: true })
+  @Column({ name: 'article_id', type: 'varchar', nullable: true })
   articleId?: string | null;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.reportsFiled, { onDelete: 'CASCADE' })

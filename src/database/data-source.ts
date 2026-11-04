@@ -5,7 +5,7 @@ import { ALL_ENTITIES } from './database.module.js';
 
 config();
 
-export const AppDataSource = new DataSource({
+const AppDataSource = new DataSource({
   type: 'postgres',
   url:
     process.env.DATABASE_URL ||

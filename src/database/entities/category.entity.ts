@@ -15,20 +15,20 @@ export class Category {
   id: string;
 
   @Index({ unique: true })
-  @Column({ unique: true })
+  @Column({ type: 'varchar', unique: true })
   name: string;
 
   @Index({ unique: true })
-  @Column({ unique: true })
+  @Column({ type: 'varchar', unique: true })
   slug: string;
 
   @Column({ type: 'text', nullable: true })
   description?: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
 
   @OneToMany(() => Article, (article) => article.category)

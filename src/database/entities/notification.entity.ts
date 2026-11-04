@@ -16,11 +16,11 @@ export class Notification {
   id: string;
 
   @Index()
-  @Column({ name: 'recipient_id' })
+  @Column({ name: 'recipient_id', type: 'varchar' })
   recipientId: string;
 
   @Index()
-  @Column({ name: 'actor_id', nullable: true })
+  @Column({ name: 'actor_id', type: 'varchar', nullable: true })
   actorId?: string | null;
 
   @Column({
@@ -29,7 +29,7 @@ export class Notification {
   })
   type: NotificationType;
 
-  @Column()
+  @Column({ type: 'varchar' })
   title: string;
 
   @Column({ type: 'text' })
@@ -39,10 +39,10 @@ export class Notification {
   data?: Record<string, any>;
 
   @Index()
-  @Column({ name: 'is_read', default: false })
+  @Column({ name: 'is_read', type: 'boolean', default: false })
   isRead: boolean;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.notificationsReceived, {

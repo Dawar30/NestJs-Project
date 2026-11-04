@@ -22,24 +22,24 @@ export class Comment {
   content: string;
 
   @Index()
-  @Column({ name: 'article_id' })
+  @Column({ name: 'article_id', type: 'varchar' })
   articleId: string;
 
   @Index()
-  @Column({ name: 'author_id' })
+  @Column({ name: 'author_id', type: 'varchar' })
   authorId: string;
 
   @Index()
-  @Column({ name: 'parent_id', nullable: true })
+  @Column({ name: 'parent_id', type: 'varchar', nullable: true })
   parentId?: string | null;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deletedAt?: Date | null;
 
   @ManyToOne(() => Article, (article) => article.comments, {
